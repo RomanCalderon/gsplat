@@ -14,7 +14,7 @@
     "vite": "^4.4.5"
   },
   "dependencies": {
-    "gsplat": "^0.2.9",
+    "gsplat": "^1.2.4",
     "react": "^18.2.0"
   }
 }

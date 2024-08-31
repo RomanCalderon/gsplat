@@ -1,0 +1,15 @@
+.controls {
+  display: flex;
+  justify-content: center;
+  margin: 1rem;
+}
+
+.controls button {
+  margin: 0 1rem;
+}
+
+span {
+  margin: 0.5rem;
+  font-size: 1.2rem;
+  color: black;
+}

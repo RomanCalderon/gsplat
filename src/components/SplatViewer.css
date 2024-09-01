@@ -2,7 +2,7 @@
   overflow: hidden;
   position: relative;
   max-height: 100vh;
-  border-radius: 16px;
+  border-radius: 1rem;
 }
 
 canvas {

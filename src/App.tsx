@@ -10,6 +10,9 @@ function App() {
     'postshot/bikes/bikes_3.splat',
     'postshot/ford-gt/ford-gt.splat',
     'postshot/flowers1/flowers1.splat',
+    'postshot/marcus/marcus.splat',
+    'postshot/jimny/jimny.splat',
+    'postshot/m235/m235.splat',
   ];
   const [currentSplat, setCurrentSplat] = useState(0);
   const nextSplat = () => setCurrentSplat((currentSplat + 1) % splats.length);

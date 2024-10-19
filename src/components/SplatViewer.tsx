@@ -4,15 +4,21 @@ import * as SPLAT from 'gsplat';
 import './SplatViewer.css';
 
 const scene = new SPLAT.Scene();
-const camera = new SPLAT.Camera();
+let camera = new SPLAT.Camera();
 let renderer: SPLAT.WebGLRenderer;
 let controls: SPLAT.OrbitControls;
 
-interface SplatViewerProps {
-  url: string | null;
+export interface CameraSettings {
+  near: number;
+  far: number;
 }
 
-const SplatViewer = ({ url }: SplatViewerProps) => {
+interface SplatViewerProps {
+  url: string | null;
+  cameraSettings: CameraSettings | undefined;
+}
+
+const SplatViewer = ({ url, cameraSettings }: SplatViewerProps) => {
   const viewerRef = useRef<HTMLDivElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [progress, setProgress] = useState(0);
@@ -24,6 +30,14 @@ const SplatViewer = ({ url }: SplatViewerProps) => {
 
   useEffect(() => {
     if (!viewerRef.current) return;
+    
+    if (cameraSettings) {
+      const cameraData = new SPLAT.CameraData();
+      cameraData.near = cameraSettings.near ?? 0.1;
+      cameraData.far = cameraSettings.far ?? 1000;
+      camera = new SPLAT.Camera(cameraData);
+    }
+
     renderViewer(url);
 
     return () => {
@@ -33,7 +47,7 @@ const SplatViewer = ({ url }: SplatViewerProps) => {
       }
       scene.reset();
     };
-  }, [url]);
+  }, [url, cameraSettings]);
 
   async function renderViewer(url: string) {
     await SPLAT.Loader.LoadAsync(url, scene, (progress) =>

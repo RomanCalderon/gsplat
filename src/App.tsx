@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import './App.css';
-import SplatViewer from './components/SplatViewer';
+import SplatViewer, { CameraSettings } from './components/SplatViewer';
 import { Card } from './components/Card';
 import Controls from './components/Controls';
 
@@ -22,12 +22,16 @@ function App() {
   const filename = splats[currentSplat].split('/').pop();
   const displayName = filename?.split('.').shift();
   const url = `https://huggingface.co/datasets/roman-apollo/3dgs/resolve/main/${splats[currentSplat]}`;
+  const defaultCameraSettings : CameraSettings = {
+    near: 2,
+    far: 50,
+  };
 
   return (
     <div className="wrapper">
       <Card>
         <h1>{displayName}</h1>
-        <SplatViewer url={url} />
+        <SplatViewer url={url} cameraSettings={defaultCameraSettings} />
         <Controls name={filename} prevSplat={prevSplat} nextSplat={nextSplat} />
       </Card>
     </div>

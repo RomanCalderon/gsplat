@@ -20,17 +20,23 @@ interface SplatViewerProps {
 
 const SplatViewer = ({ url, cameraSettings }: SplatViewerProps) => {
   const viewerRef = useRef<HTMLDivElement>(null);
+  const rendererRef = useRef<SPLAT.WebGLRenderer | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [progress, setProgress] = useState(0);
-  const rendererRef = useRef<SPLAT.WebGLRenderer | null>(null);
-  let viewerWidth = 0;
-  let viewerHeight = 0;
 
   if (!url) return <div className='invalid-url'>Invalid URL</div>
 
   useEffect(() => {
     if (!viewerRef.current) return;
-    
+
+    const resizeObserver = new ResizeObserver(handleResize);
+    resizeObserver.observe(viewerRef.current);
+
+    if (rendererRef.current) {
+      rendererRef.current.dispose();
+    }
+    scene.reset();
+
     if (cameraSettings) {
       const cameraData = new SPLAT.CameraData();
       cameraData.near = cameraSettings.near ?? 0.1;
@@ -41,19 +47,16 @@ const SplatViewer = ({ url, cameraSettings }: SplatViewerProps) => {
     renderViewer(url);
 
     return () => {
+      resizeObserver.disconnect();
       if (rendererRef.current) {
         rendererRef.current.dispose();
-        rendererRef.current = null;
       }
       scene.reset();
     };
   }, [url, cameraSettings]);
 
   async function renderViewer(url: string) {
-    await SPLAT.Loader.LoadAsync(url, scene, (progress) =>
-      setProgress(progress),
-    );
-
+    await SPLAT.Loader.LoadAsync(url, scene, (progress) => setProgress(progress));
     renderer = new SPLAT.WebGLRenderer(canvasRef.current);
     controls = new SPLAT.OrbitControls(camera, renderer.canvas);
     rendererRef.current = renderer;
@@ -68,40 +71,26 @@ const SplatViewer = ({ url, cameraSettings }: SplatViewerProps) => {
     requestAnimationFrame(frame);
   }
 
-  function handleResize() {
+  const handleResize = () => {
     if (!viewerRef.current) return;
     const width = viewerRef.current.clientWidth;
     const height = viewerRef.current.clientHeight;
-
-    if (width === viewerWidth && height === viewerHeight) {
-      return;
-    }
-
-    viewerWidth = width;
-    viewerHeight = height;
-    renderer.setSize(viewerWidth, viewerHeight);
-    renderer.resize();
+    rendererRef.current?.setSize(width, height);
+    rendererRef.current?.resize();
     camera.update();
-  }
-
-  function handleProgress(progress: number) {
-    let isLoading = progress < 1;
-    if (!isLoading) return null;
-    return (
-      <div className="splat-loader">
-        {`Loading: ${(progress * 100).toFixed(2)}%`}
-      </div>
-    );
-  }
+  };
 
   return (
     <div className="splat-viewer" ref={viewerRef}>
-      {handleProgress(progress)}
+      {progress < 1 && (
+        <div className="splat-loader">
+          {`Loading: ${(progress * 100).toFixed(2)}%`}
+        </div>
+      )}
       <canvas
         id="canvas"
         ref={canvasRef}
-        width={viewerWidth}
-        height={viewerHeight}
+        style={{ width: '100%', height: '100%' }}
       />
     </div>
   );

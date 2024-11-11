@@ -62,7 +62,6 @@ const SplatViewer = ({ url, cameraSettings }: SplatViewerProps) => {
     rendererRef.current = renderer;
 
     const frame = () => {
-      handleResize();
       controls.update();
       renderer.render(scene, camera);
       requestAnimationFrame(frame);

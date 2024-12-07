@@ -10,6 +10,7 @@ function App() {
     'postshot/bikes/bikes_3.splat',
     'postshot/ford-gt/ford-gt.splat',
     'postshot/flowers1/flowers1.splat',
+    'postshot/guitar-1/guitar-1.splat',
     'postshot/marcus/marcus.splat',
     'postshot/jimny/jimny.splat',
     'postshot/m235/m235.splat',
